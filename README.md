@@ -1,3 +1,3 @@
 #Auth Server
 
-- JWT based auth server using node, express and mongo
+- JWT based auth server using Passport, Bcrypt, Node, Express and Mongo
