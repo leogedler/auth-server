@@ -14,9 +14,11 @@ const signup = (req, res, next) => {
     if(!email || !password) return res.status(422).json({error: 'You must define an emai and password'});
 
     //  See if a user with the given email exists
-    User.findOne({ email}).then((existingUser)=>{
+    User.findOne({email}).then((existingUser)=>{
         // If a user with email does exist, return an error
-        if(existingUser)  return res.status(422).send({error: 'email is in use'});
+        if(existingUser)  {
+            throw {error: 'Email is in use', status: 422};
+        }
 
         // If a user with email does NOT exist, create and save user record
         const user = new User({
@@ -24,10 +26,13 @@ const signup = (req, res, next) => {
             password
         })
         return user.save();
-    }).then((userCreated) => {    
+    }).then((userCreated) => {   
         return res.json({ token: tokenForUser(userCreated) });
     }).catch((err)=>{
         console.log('error', err);
+        if(err.status === 422){
+             return res.status(422).json(err);
+        }
         return res.status(500).json(err);
     })
 }
